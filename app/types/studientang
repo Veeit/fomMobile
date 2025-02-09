@@ -1,0 +1,4 @@
+export interface Studiengang {
+  id: string;
+  studienfach: string;
+}
