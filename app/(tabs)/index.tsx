@@ -7,12 +7,11 @@ import OAuthScreen from '@/components/OAuth';
 import { useApi } from '@/hooks/apiClient';
 import { useStudiengaenge } from '@/hooks/useStudiengang';
 import { Studiengang } from '@/types/studiengang';
+import { useCalendar } from '@/hooks/useCalendar';
 
 export default function App() {
   return (
-    <AuthProvider>
       <MainContent />
-    </AuthProvider>
   );
 }
 
@@ -22,6 +21,17 @@ function MainContent() {
   const [studiengaenge, setStudiengaenge] = useState<Studiengang[]>([]);
   const [selectedStudiengang, setSelectedStudiengang] = useState<Studiengang>();
   
+  const { fetchCalendar } = useCalendar();
+
+  const handleFetchCalendar = async () => {
+    try {
+      const calendarData = await fetchCalendar();
+      console.log('Calendar:', calendarData);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const handleFetchStudiengaenge = async () => {
     try {
       const data = await fetchStudiengaenge();
@@ -74,6 +84,8 @@ function MainContent() {
           </Picker>
           <Button title="Logout" onPress={logout} />
           <Button title='Studybook' onPress={fetchStudybook} />
+          <Button title='Calender' onPress={handleFetchCalendar} />
+
         </>
       ) : (
         <OAuthScreen />

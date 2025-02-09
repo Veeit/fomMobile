@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import { AuthProvider, AuthContext } from '@/components/AuthContext';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -7,11 +8,14 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import WebViewTab from '@/components/WebViewTab';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
+    <AuthProvider>
+
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -34,12 +38,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="webview"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Web',
         }}
       />
     </Tabs>
+    </AuthProvider>
   );
 }
