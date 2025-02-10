@@ -27,7 +27,7 @@ export default function WebViewTab() {
 const cssInjection = `
   const styleSheet = \`
     .cards {
-    grid-template-columns: repeat(1, minmax(380px, 1fr)) !important;
+    grid-template-columns: repeat(1, minmax(340px, 1fr)) !important;
 }
   \`;
 
@@ -107,6 +107,6 @@ const cssInjection = `
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: Platform.OS === 'ios' ? 100 : 0,
+      marginTop: Platform.OS === 'ios' ? 100 : 80,
     },
   });

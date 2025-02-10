@@ -3,6 +3,7 @@ import { View, Button, Modal, ActivityIndicator, StyleSheet } from 'react-native
 import { WebView } from 'react-native-webview';
 import { AuthContext } from './AuthContext';
 import { AUTH_CONFIG } from './AuthConfig';
+import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 
 const OAuthWebView = () => {
   const { setTokenResponse } = useContext(AuthContext);
@@ -72,6 +73,9 @@ const OAuthWebView = () => {
   };
 
   return (
+    <SafeAreaProvider>
+    <SafeAreaView style={[styles.container]}>
+
     <View style={styles.container}>
       <Button 
         title="Login mit OAuth2" 
@@ -93,6 +97,11 @@ const OAuthWebView = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
+          <Button 
+            title="Schließen" 
+            onPress={() => setModalVisible(false)} 
+          />
+
           <WebView
             source={{ uri: getAuthUrl() }}
             onNavigationStateChange={handleNavigationStateChange}
@@ -106,13 +115,12 @@ const OAuthWebView = () => {
             )}
             incognito={true}
           />
-          <Button 
-            title="Schließen" 
-            onPress={() => setModalVisible(false)} 
-          />
+          
         </View>
       </Modal>
     </View>
+    </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
