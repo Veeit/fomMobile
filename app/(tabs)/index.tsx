@@ -14,6 +14,12 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
+interface Exam {
+  id: number;
+  name: string;
+  date: Date;
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
@@ -28,13 +34,33 @@ function MainContent() {
   const { tokenResponse, logout, isLoggedIn } = useContext(AuthContext);
   const { fetchStudiengaenge } = useStudiengaenge();
   const [studiengaenge, setStudiengaenge] = useState<Studiengang[]>([]);
-  const [selectedStudiengang, setSelectedStudiengang] = useState<Studiengang>();
+  // const [selectedStudiengang, setSelectedStudiengang] = useState<Studiengang>();
   const [calendarEntries, setCalendarEntries] = useState<CalendarEntry[]>([]);
+  const [exams, setExams] = useState<Exam[]>([]);
 
   const { fetchCalendar } = useCalendar();
   const navigation = useNavigation();
 
+  const handleFetchCalendar = useCallback(async () => {
+    console.log('Fetching calendar...');
+    try {
+      const data: CalendarResponse = await fetchCalendar();
+      const now = new Date();
+      
+      const entries: CalendarEntry[] = Object.values(data.termine)
+        .flat()
+        .filter(entry => new Date(entry.von) > now)
+        .sort((a, b) => new Date(a.von).getTime() - new Date(b.von).getTime());
+      
+      setCalendarEntries(entries);
+      console.log('Future Calendar Events:', entries);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }, [fetchCalendar]);
+
   useEffect(() => {
+    handleFetchCalendar();
     navigation.setOptions({
       headerShown: true,
       headerBackTitle: 'Back',
@@ -66,32 +92,15 @@ function MainContent() {
         </TouchableOpacity>
       ),
     });
-  }, [navigation, handleFetchCalendar, logout]);
-
-  const handleFetchCalendar = async () => {
-    try {
-      const data: CalendarResponse = await fetchCalendar();
-      const now = new Date();
-      
-      const entries: CalendarEntry[] = Object.values(data.termine)
-        .flat()
-        .filter(entry => new Date(entry.von) > now)
-        .sort((a, b) => new Date(a.von).getTime() - new Date(b.von).getTime());
-      
-      setCalendarEntries(entries);
-      console.log('Future Calendar Events:', entries);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+  }, [navigation, logout]);
 
   const handleFetchStudiengaenge = async () => {
     try {
       const data = await fetchStudiengaenge();
       // Convert numeric IDs to strings if necessary
       const formattedData = data.map((item: any) => ({
-        id: String(item.uuid),
-        studienfach: item.title
+        id: String(item.id),
+        studienfach: item.studienfach
       }));
       setStudiengaenge(formattedData);
       console.log('Studiengänge:', formattedData);
@@ -101,19 +110,56 @@ function MainContent() {
   };
 
   const api = useApi();
+  
+  const extractExams = (data: any): Exam[] => {
+    const examList: Exam[] = [];
+    
+    // const processNode = (node: any) => {
+    //   if (!node) return;
+      
+    //   // if (node.pruefungstyp === 'Klausur') {
+    //   //   const date = parseExamDate(node.onlydatum || node.datum);
+    //   //   if (date) {
+    //   //     examList.push({
+    //   //       id: node.pruefungid || 0,
+    //   //       name: node.name || 'Unbekannt',
+    //   //       date
+    //   //     });
+    //   //   }
+    //   // }
+      
+    //   if (Array.isArray(node)) {
+    //     node.forEach(processNode);
+    //   } else if (typeof node === 'object') {
+    //     Object.values(node).forEach(processNode);
+    //   }
+    // };
+    
+    // processNode(data);
+
+    // data.
+
+    return examList.sort((a, b) => b.date.getTime() - a.date.getTime());
+  };
 
   const fetchStudybook = useCallback(async () => {
-    console.log('Selected studiengang:', selectedStudiengang);
-
-    try {
-      const studybookData = await api.getStudybook(selectedStudiengang);
-      console.log('Studybook data:', studybookData);
-    } catch (error) {
-      console.error('Error fetching studybook:', error);
+    const allExams: Exam[] = [];
+    
+    for (const studiengang of studiengaenge) {
+      try {
+        const data = await api.getStudybook(studiengang.id);
+        console.log(data);
+        allExams.push(...extractExams(data));
+      } catch (error) {
+        console.error('Error fetching studybook:', error);
+      }
     }
-  }, [api]);
+    
+    console.log('All Exams:', allExams);
+    setExams(allExams.sort((a, b) => b.date.getTime() - a.date.getTime()));
+  }, [api, studiengaenge]);
 
-  const renderItem = ({ item, section }: { item: CalendarEntry; section: any }) => {
+  const renderItem = ({ item, section }: { item: CalendarEntry | Exam; section: any }) => {
     if (section.title === 'Actions') {
       return (
         <Pressable 
@@ -124,6 +170,17 @@ function MainContent() {
         </Pressable>
       );
     }
+
+    // if (section.title === 'Upcoming Exams') {
+    //   return (
+    //     <View style={styles.examItem}>
+    //       <Text style={styles.examTitle}>{item.name}</Text>
+    //       <Text style={styles.examDate}>
+    //         {item.date.toLocaleString('de-DE')}
+    //       </Text>
+    //     </View>
+    //   );
+    // }
     
     // Calendar item
     return (
@@ -151,6 +208,10 @@ function MainContent() {
                 { title: 'Studybook', onPress: fetchStudybook },
               ],
             },
+            // {
+            //   title: 'Upcoming Exams',
+            //   data: exams.filter(exam => exam.date > new Date()),
+            // },
             {
               title: 'Calendar',
               data: calendarEntries,
@@ -174,6 +235,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     marginTop: Platform.OS === 'ios' ? 20 : 25,
+    marginBottom: Platform.OS === 'ios' ? 40 : 0,
+
   },
   title: {
     fontSize: 24,
@@ -238,5 +301,20 @@ const styles = StyleSheet.create({
   listContent: {
     width: '100%',
     flexGrow: 1,
-  }
+  },
+  examItem: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    width: '100%',
+    backgroundColor: 'white',
+  },
+  examTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  examDate: {
+    fontSize: 14,
+    color: '#666',
+  },
 });
