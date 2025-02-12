@@ -6,6 +6,7 @@ But there are two differences, I also provide you with the next exam information
 
 ## Features:
 - Show all lectures with rooms
+- Embeds the online campus (webpage) never seach again, never need to sign in again! 
 - Show all exams with rooms (as soon the API provides me with the next scheduled exams)
 - Show you a live widget on iPhones with the room 30min before the exam. Never seach again! (soon, just need to figure out how this work with React Native) 
 
