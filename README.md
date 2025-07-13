@@ -1,8 +1,24 @@
-# Welcome to your Expo app 👋
+# FOM Mobile 
+This app has only one goal, provide information about the next lecture without much hassel. I personaly didn't like the oc mobile app from my Universtiy FOM and the webpage isn't perfectly optimised for mobile and needs a lot of clicks to get to simple information. 
+
+This is how this App is born, it provides you with just the basic information where the next lecture is and when. Sounds like a calender? Yes basicly it is. 
+But there are two differences, I also provide you with the next exam information and how you finished the last one. With the old app I never could find where the exam took place and the webpage needed to many clicks to get this information quickly before a stressful exam. This is solved now! 
+
+## Features:
+- Show all lectures with rooms
+- Embeds the online campus (webpage) never seach again, never need to sign in again! 
+- Show all exams with rooms (as soon the API provides me with the next scheduled exams)
+- Show you a live widget on iPhones with the room 30min before the exam. Never seach again! (soon, just need to figure out how this work with React Native) 
+
+## Beta Links:
+As soon as the exams are added :) 
+
+
+## Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Get started
+### Get started
 
 1. Install dependencies
 
@@ -25,7 +41,7 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+### Get a fresh project
 
 When you're ready, run:
 
@@ -35,14 +51,14 @@ npm run reset-project
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
+### Learn more
 
 To learn more about developing your project with Expo, look at the following resources:
 
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Join the community
+### Join the community
 
 Join our community of developers creating universal apps.
 
