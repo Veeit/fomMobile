@@ -27,6 +27,7 @@ export interface CalendarEntry {
   bis: string;
   raum: Room;
   kbid?: number;
+  peid?: string;
   bid?: number;
   personen: Person[];
   uuid: string;

@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from '@/components/AuthContext';
+import { useApi } from './apiClient';
 
 export function useCalendar() {
   const { tokenResponse } = useContext(AuthContext);
